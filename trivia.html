@@ -1,0 +1,81 @@
+<!-- By Andy Nguyen -->
+<!-- Create a trivia game using data from an API. Manipulate the DOM based on data received from the API.
+Display the questions and possible answers in the HTML -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+    <title>Trivia API Assignment</title>
+    <style>
+        h1, h6 {
+            text-align: center;
+        }
+        body {
+            color: rgb(198, 198, 198);
+            background-color: black;
+        }
+    </style>
+    <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous">
+    </script>
+    <script>
+    $(document).ready(function(){
+        // Automatically fetches 20 multiple choice questions when page is loaded
+        $.get("https://opentdb.com/api.php?amount=20&category=11&type=multiple", displayQuestions)
+        function displayQuestions(data) {
+            var questions = data.results;
+            console.log(questions)
+            
+            for (var i=0; i<questions.length; i++){
+                // The API separates the array of incorrect answers from the correct answer.
+                // Create an empty array to house all answer choices...
+                var answers = [];
+                for (var value of questions[i].incorrect_answers){
+                    answers.push(value);
+                }
+                answers.push(questions[i].correct_answer)
+                // ...then shuffle the order of the answer choices within the new array
+                //...this prevents the correct answer from being in the same position for each question
+                for (var j = answers.length-1; j > 0; j--){
+                    var k = Math.floor(Math.random() * (j+1));
+                    var temp = answers[j];
+                    answers[j] = answers[k];
+                    answers[k] = temp;
+                }
+  
+                $('#placeholder').append (
+                    "<li>" + questions[i].question + "</li>" +
+                        "<ul>"
+                );
+                for (var value of answers){
+                    $('#placeholder').append (
+                        "<ul><li>" + value + "</li></ul>"
+                    );
+                }
+                $('#placeholder').append (
+                    "</ul>" + "<p></p>"
+                );
+            }
+        }
+
+
+    });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Film Trivia</h1>
+        <h6>Refresh the page to generate new questions.</h6>
+        <div>
+            <ol>
+                <p id="placeholder"></p>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>
